@@ -10,5 +10,6 @@ namespace StarWars.Explorer.Services
         Task<Film> GetFilmAsync(string id);
         Task<List<Planet>> GetPlanetsAsync(string? searchTerm);
         Task<Planet> GetPlanetAsync(string id);
+        Task<PagedResult<Planet>> GetPlanetsAsync(string? searchTerm = null, int page = 1);
     }
 }

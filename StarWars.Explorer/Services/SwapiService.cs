@@ -76,6 +76,21 @@ namespace StarWars.Explorer.Services
                 return await _helper.GetDetailAsync<Planet>($"/planets/{id}");
             }, $"GetPlanetAsync(id: {id})");
         }
+
+        public async Task<PagedResult<Planet>> GetPlanetsAsync(string? searchTerm = null, int page = 1)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                string endpoint = $"/planets?page={page}&limit=9&expanded=true";
+
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    endpoint += $"&name={searchTerm}";
+                }
+
+                return await _helper.GetPagedListAsync<Planet>(endpoint);
+            }, "GetPlanetsAsync");
+        }
         #endregion "Planets"
     }
 }

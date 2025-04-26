@@ -42,5 +42,28 @@ namespace StarWars.Explorer.Services.Common
             }
             return item;
         }
+
+        public async Task<PagedResult<T>> GetPagedListAsync<T>(string endpoint) where T : IUidEntity, new()
+        {
+            var response = await _httpClient.GetFromJsonAsync<SwapiTechResponse<T>>(BaseUrl + endpoint);
+            var pagedResult = new PagedResult<T>();
+
+            if (response != null)
+            {
+                foreach (var result in GetResults(response))
+                {
+                    var item = result.Properties;
+                    item.Uid = result.Uid;
+                    pagedResult.Items.Add(item);
+                }
+
+                pagedResult.TotalPages = response.Total_Pages;
+                pagedResult.TotalRecords = response.Total_Records;
+                pagedResult.Next = response.Next;
+                pagedResult.Previous = response.Previous;
+            }
+
+            return pagedResult;
+        }
     }
 }

@@ -7,8 +7,8 @@ namespace StarWars.Explorer.Models
         public string Message { get; set; }
         public int Total_Records { get; set; }
         public int Total_Pages { get; set; }
-        public string Previous { get; set; }
-        public string Next { get; set; }
+        public string? Previous { get; set; }
+        public string? Next { get; set; }
 
         [JsonPropertyName("result")]
         public List<SwapiTechResult<T>> Result { get; set; }
@@ -40,5 +40,14 @@ namespace StarWars.Explorer.Models
         public string Description { get; set; }
         public T Properties { get; set; }
         public string Uid { get; set; }
+    }
+
+    public class PagedResult<T>
+    {
+        public List<T> Items { get; set; } = new();
+        public string? Next { get; set; }
+        public string? Previous { get; set; }
+        public int TotalPages { get; set; }
+        public int TotalRecords { get; set; }
     }
 }
