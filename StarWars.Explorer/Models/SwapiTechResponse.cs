@@ -9,8 +9,10 @@ namespace StarWars.Explorer.Models
         public int Total_Pages { get; set; }
         public string Previous { get; set; }
         public string Next { get; set; }
+
         [JsonPropertyName("result")]
         public List<SwapiTechResult<T>> Result { get; set; }
+
         [JsonPropertyName("results")]
         public List<SwapiTechResult<T>> Results { get; set; }
     }

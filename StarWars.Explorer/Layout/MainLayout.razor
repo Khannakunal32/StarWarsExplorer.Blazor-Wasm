@@ -19,38 +19,41 @@
  @inherits LayoutComponentBase
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+	<div class="sidebar">
+		<NavMenu />
+	</div>
 
-    <main>
-        <div class="star-wars-header">
-            <div class="top-row px-4">
-                <h1>Star Wars Explorer</h1>
-            </div>
-        </div>
+	<main>
+		<div class="star-wars-header">
+			<div class="top-row px-4">
+				<h1>Star Wars Explorer</h1>
+			</div>
+		</div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+		<article class="content px-4">
+			@Body
+		</article>
+	</main>
 </div>
 
 <style>
-    .star-wars-header {
-        background-color: #000;
-        color: #FFE81F;
-        padding: 10px 0;
-    }
+	.star-wars-header {
+		background-color: #000;
+		color: #FFE81F;
+		padding: 0 0 10px 0;
+	}
 
-    .top-row {
-        display: flex;
-        align-items: center;
-    }
+	.top-row {
+		display: flex;
+		align-items: center;
+	}
 
-        .top-row h1 {
-            font-family: 'Arial', sans-serif;
-            font-weight: bold;
-            margin: 0;
-        }
+		.top-row h1 {
+			font-family: 'Arial', sans-serif;
+			font-weight: bold;
+			margin: 0;
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+		}
 </style>

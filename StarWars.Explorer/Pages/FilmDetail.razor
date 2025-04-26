@@ -1,0 +1,212 @@
+﻿@page "/films/{Id}"
+
+@using StarWars.Explorer.Components
+@using StarWars.Explorer.Models
+@using StarWars.Explorer.Services
+
+@inject ISwapiService SwapiService
+@inject NavigationManager NavigationManager
+
+<div class="container mt-4">
+	@if (loading)
+	{
+		<LoadingIndicator />
+	}
+	else if (film == null)
+	{
+		<div class="alert alert-danger">Film not found.</div>
+	}
+	else
+	{
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="/">Home</a></li>
+						<li class="breadcrumb-item"><a href="/films">Films</a></li>
+						<li class="breadcrumb-item active">@film.Title</li>
+					</ol>
+				</nav>
+			</div>
+		</div>
+
+		<div class="card">
+			<div class="card-header">
+				<h1>@film.Title</h1>
+				<h6>Episode @film.EpisodeId</h6>
+			</div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-md-6">
+						<h4>Details</h4>
+						<ul class="list-group">
+							<li class="list-group-item"><strong>Director:</strong> @film.Director</li>
+							<li class="list-group-item"><strong>Producer:</strong> @film.Producer</li>
+							<li class="list-group-item"><strong>Release Date:</strong> @film.ReleaseDate</li>
+						</ul>
+
+						<h4 class="mt-4">Opening Crawl</h4>
+						<div class="card">
+							<div class="card-body opening-crawl">
+								@film.OpeningCrawl
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<h4>Characters</h4>
+						<div class="characters-container">
+							@if (film.Characters?.Count > 0)
+							{
+								@if (!showCharacterNames)
+								{
+									<a class="btn btn-primary mb-2" @onclick="LoadCharacterNames">
+										Display names
+									</a>
+								}	
+
+								<ul class="list-group">
+									@if (loadingCharacter)
+									{
+										<LoadingIndicator />
+									}
+									else
+									{
+										@foreach (var characterUrl in film.Characters)
+										{
+											<li class="list-group-item">
+												<a href="@GetCharacterLink(characterUrl)">
+													@GetCharacterLabel(characterUrl)
+												</a>
+											</li>
+										}
+									}
+								</ul>
+							}
+							else
+							{
+								<p>No characters found.</p>
+							}
+						</div>
+
+						<h4 class="mt-4">Planets</h4>
+						<div class="planets-container">
+							@if (film.Planets?.Count > 0)
+							{
+								<ul class="list-group">
+									@foreach (var planetUrl in film.Planets)
+									{
+										<li class="list-group-item">
+											<a href="@GetPlanetLink(planetUrl)">
+												Planet @ExtractId(planetUrl)
+											</a>
+										</li>
+									}
+								</ul>
+							}
+							else
+							{
+								<p>No planets found.</p>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+</div>
+
+
+@code {
+	[Parameter]
+	public string Id { get; set; }
+
+	private Film film;
+	private bool loading = true;
+	private bool loadingCharacter = false;
+	private bool showCharacterNames = false;
+	private Dictionary<string, string> characterNames = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadFilm();
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await LoadFilm();
+	}
+
+	private async Task LoadFilm()
+	{
+		loading = true;
+		film = await SwapiService.GetFilmAsync(Id);
+		loading = false;
+	}
+
+	private string ExtractId(string url)
+	{
+		var segments = url.TrimEnd('/').Split('/');
+		return segments[^1];
+	}
+
+	private string GetCharacterLink(string url)
+	{
+		return $"/characters/{ExtractId(url)}";
+	}
+
+	private string GetPlanetLink(string url)
+	{
+		return $"/planets/{ExtractId(url)}";
+	}
+
+	private string GetCharacterLabel(string url)
+	{
+		var id = ExtractId(url);
+		if (showCharacterNames && characterNames.TryGetValue(id, out var name))
+		{
+			return name;
+		}
+		else
+		{
+			return $"Character {id}";
+		}
+	}
+
+	private async Task LoadCharacterNames()
+	{
+		if (film?.Characters == null || characterNames.Count > 0)
+			return;
+
+		loadingCharacter = true;
+
+		var tasks = film.Characters.Select(async url =>
+		{
+			var id = ExtractId(url);
+			var character = await SwapiService.GetCharacterAsync(id);
+			if (character != null)
+			{
+				characterNames[id] = character.Name;
+			}
+		});
+
+		await Task.WhenAll(tasks);
+		loadingCharacter = false;
+
+		showCharacterNames = true;
+	}
+}
+
+<style>
+	.opening-crawl {
+		font-style: italic;
+		background-color: #2d2d2d;
+		padding: 15px;
+		border-radius: 5px;
+		white-space: pre-line;
+	}
+
+	.characters-container, .planets-container {
+		max-height: 300px;
+		overflow-y: auto;
+	}
+</style>

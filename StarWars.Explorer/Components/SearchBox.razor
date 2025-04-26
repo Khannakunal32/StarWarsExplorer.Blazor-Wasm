@@ -1,8 +1,7 @@
 ﻿@using System.Timers
 
 <div class="search-box">
-    <input type="text" placeholder="Search..." @bind-value="SearchText" @bind-value:event="oninput" @onkeyup="HandleKeyUp" />
-    <button @onclick="OnSearch">Search</button> 
+    <input type="text" placeholder="Start typing to search..." @bind-value="SearchText" @bind-value:event="oninput" @onkeyup="HandleKeyUp" />
 </div>
 
 @code {

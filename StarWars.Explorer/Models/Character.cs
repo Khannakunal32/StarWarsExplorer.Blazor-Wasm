@@ -2,8 +2,9 @@
 
 namespace StarWars.Explorer.Models
 {
-    public class Character
+    public class Character : IUidEntity
     {
+        public string Uid { get; set; } = string.Empty;
         [JsonPropertyName("name")]
         public string Name { get; set; }
 
@@ -33,7 +34,5 @@ namespace StarWars.Explorer.Models
 
         [JsonPropertyName("url")]
         public string Url { get; set; }
-
-        public string Uid { get; set; }
     }
 }

@@ -1,99 +1,94 @@
-﻿using StarWars.Explorer.Infrastructure;
+﻿using System.Net.Http.Json;
+using StarWars.Explorer.Infrastructure;
 using StarWars.Explorer.Models;
-using System.Dynamic;
-using System.Net.Http.Json;
-using System.Text.Json;
+using StarWars.Explorer.Services.Common;
 
 namespace StarWars.Explorer.Services
 {
     public class SwapiService : BaseService, ISwapiService
     {
         private readonly HttpClient _httpClient;
+        private readonly SwapiTechServiceHelper _helper;
         private const string BaseUrl = "https://www.swapi.tech/api";
 
-        public SwapiService(HttpClient httpClient, IExceptionInterceptor exceptionInterceptor)
+        public SwapiService(HttpClient httpClient, IExceptionInterceptor exceptionInterceptor, SwapiTechServiceHelper helper)
             : base(exceptionInterceptor)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(BaseUrl);
+            _helper = helper;
         }
 
+        #region "Characters"
         public async Task<List<Character>> GetCharactersAsync(string? searchTerm)
         {
             return await ExecuteAsync(async () =>
             {
-                var characters = new List<Character>();
-
                 string endpoint = "/people";
-                if (!string.IsNullOrWhiteSpace(searchTerm))
-                {
-                    endpoint += $"?name={searchTerm}";
-                }
-                else
-                {
-                    endpoint += "?expanded=true";
-                }
-
-                var response = await _httpClient.GetFromJsonAsync<SwapiTechResponse<Character>>(BaseUrl + endpoint);
-
-                var results = response?.Results ?? response?.Result;
-
-                if (results != null)
-                {
-                    foreach (var result in results)
-                    {
-                        var character = result.Properties;
-                        character.Uid = result.Uid;
-                        characters.Add(character);
-                    }
-                }
-
-                return characters;
+                endpoint += string.IsNullOrWhiteSpace(searchTerm) ? "?expanded=true" : $"?name={searchTerm}";
+                return await _helper.GetListAsync<Character>(endpoint);
             }, "GetCharactersAsync");
+
+            //return await ExecuteAsync(async () =>
+            //{
+            //    var characters = new List<Character>();
+
+            //    string endpoint = "/people";
+            //    if (!string.IsNullOrWhiteSpace(searchTerm))
+            //    {
+            //        endpoint += $"?name={searchTerm}";
+            //    }
+            //    else
+            //    {
+            //        endpoint += "?expanded=true";
+            //    }
+
+            //    var response = await _httpClient.GetFromJsonAsync<SwapiTechResponse<Character>>(BaseUrl + endpoint);
+
+            //    var results = response?.Results ?? response?.Result;
+
+            //    if (results != null)
+            //    {
+            //        foreach (var result in results)
+            //        {
+            //            var character = result.Properties;
+            //            character.Uid = result.Uid;
+            //            characters.Add(character);
+            //        }
+            //    }
+
+            //    return characters;
+            //}, "GetCharactersAsync");
         }
 
         public async Task<Character?> GetCharacterAsync(string id)
         {
             return await ExecuteAsync(async () =>
             {
-                var response = await _httpClient.GetFromJsonAsync<SwapiTechDetailResponse<Character>>(BaseUrl + $"/people/{id}");
-                if (response?.Result?.Properties != null)
-                {
-                    var character = response.Result.Properties;
-                    character.Uid = id;
-                    return character;
-                }
-                return null;
+                return await _helper.GetDetailAsync<Character>($"/people/{id}");
             }, $"GetCharacterAsync(id: {id})");
+            //return await ExecuteAsync(async () =>
+            //{
+            //    var response = await _httpClient.GetFromJsonAsync<SwapiTechDetailResponse<Character>>(BaseUrl + $"/people/{id}");
+            //    if (response?.Result?.Properties != null)
+            //    {
+            //        var character = response.Result.Properties;
+            //        character.Uid = id;
+            //        return character;
+            //    }
+            //    return null;
+            //}, $"GetCharacterAsync(id: {id})");
         }
+        #endregion "Characters"
 
-        public async Task<List<Film>> GetFilmsAsync(string searchTerm = null)
+        #region "Films"
+        public async Task<List<Film>> GetFilmsAsync(string? searchTerm = null)
         {
             return await ExecuteAsync(async () =>
             {
-                var films = new List<Film>();
-
                 string endpoint = "/films";
-                if (!string.IsNullOrWhiteSpace(searchTerm))
-                {
-                    endpoint += $"?search={searchTerm}";
-                }
-
-                var response = await _httpClient.GetFromJsonAsync<SwapiTechResponse<Film>>(endpoint);
-
-                if (response?.Results != null)
-                {
-                    foreach (var result in response.Results)
-                    {
-                        var film = await GetFilmAsync(result.Uid);
-                        if (film != null)
-                        {
-                            films.Add(film);
-                        }
-                    }
-                }
-
-                return films;
+                endpoint += string.IsNullOrWhiteSpace(searchTerm) ? "?expanded=true" : $"?title={searchTerm}";
+                return await _helper.GetListAsync<Film>(endpoint);
             }, "GetFilmsAsync");
         }
 
@@ -101,16 +96,10 @@ namespace StarWars.Explorer.Services
         {
             return await ExecuteAsync(async () =>
             {
-                var response = await _httpClient.GetFromJsonAsync<SwapiTechDetailResponse<Film>>($"/films/{id}");
-                if (response?.Result?.Properties != null)
-                {
-                    var film = response.Result.Properties;
-                    film.Id = id;
-                    return film;
-                }
-                return null;
+                return await _helper.GetDetailAsync<Film>($"/films/{id}");
             }, $"GetFilmAsync(id: {id})");
         }
+        #endregion "Films"
 
         public async Task<List<Planet>> GetPlanetsAsync(string searchTerm = null)
         {

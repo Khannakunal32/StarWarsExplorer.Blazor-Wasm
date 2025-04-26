@@ -1,0 +1,57 @@
+﻿@page "/films"
+
+@using StarWars.Explorer.Components
+@using StarWars.Explorer.Models
+@using StarWars.Explorer.Services
+
+@inject ISwapiService SwapiService
+
+<div class="container mt-4">
+	<h1>Star Wars Films</h1>
+
+	<SearchBox SearchText="@searchText" OnSearchChanged="HandleSearch" />
+
+	@if (loading)
+	{
+		<LoadingIndicator />
+	}
+	else if (films == null || !films.Any())
+	{
+		<div class="alert alert-info">No films found.</div>
+	}
+	else
+	{
+		<div class="row">
+			@foreach (var film in films)
+			{
+				<div class="col-md-4 mb-4">
+					<FilmCard Film="film" />
+				</div>
+			}
+		</div>
+	}
+</div>
+
+@code {
+	private List<Film> films;
+	private bool loading = true;
+	private string searchText = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadFilms();
+	}
+
+	private async Task LoadFilms()
+	{
+		loading = true;
+		films = await SwapiService.GetFilmsAsync(searchText);
+		loading = false;
+	}
+
+	private async Task HandleSearch(string searchValue)
+	{
+		searchText = searchValue;
+		await LoadFilms();
+	}
+}

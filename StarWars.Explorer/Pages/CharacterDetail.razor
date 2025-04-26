@@ -1,5 +1,6 @@
 ﻿@page "/characters/{Id}"
 
+@using StarWars.Explorer.Components
 @using StarWars.Explorer.Models
 @using StarWars.Explorer.Services
 
@@ -7,49 +8,49 @@
 @inject NavigationManager NavigationManager
 
 <div class="container mt-4">
-    @if (loading)
-    {
-        <Components.LoadingIndicator />
-    }
-    else if (character == null)
-    {
-        <div class="alert alert-danger">Character not found.</div>
-    }
-    else
-    {
-        <div class="row">
-            <div class="col-md-12">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/">Home</a></li>
-                        <li class="breadcrumb-item"><a href="/characters">Characters</a></li>
-                        <li class="breadcrumb-item active">@character.Name</li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
+	@if (loading)
+	{
+		<LoadingIndicator />
+	}
+	else if (character == null)
+	{
+		<div class="alert alert-danger">Character not found.</div>
+	}
+	else
+	{
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="/">Home</a></li>
+						<li class="breadcrumb-item"><a href="/characters">Characters</a></li>
+						<li class="breadcrumb-item active">@character.Name</li>
+					</ol>
+				</nav>
+			</div>
+		</div>
 
-        <div class="card">
-            <div class="card-header">
-                <h1>@character.Name</h1>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4>Personal Information</h4>
-                        <ul class="list-group">
-                            <li class="list-group-item"><strong>Height:</strong> @character.Height cm</li>
-                            <li class="list-group-item"><strong>Mass:</strong> @character.Mass kg</li>
-                            <li class="list-group-item"><strong>Hair Color:</strong> @character.HairColor</li>
-                            <li class="list-group-item"><strong>Skin Color:</strong> @character.SkinColor</li>
-                            <li class="list-group-item"><strong>Eye Color:</strong> @character.EyeColor</li>
-                            <li class="list-group-item"><strong>Birth Year:</strong> @character.BirthYear</li>
-                            <li class="list-group-item"><strong>Gender:</strong> @character.Gender</li>
-                        </ul>
-                    </div>
-                    @* <div class="col-md-6">
+		<div class="card">
+			<div class="card-header">
+				<h1>@character.Name</h1>
+			</div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-md-6">
+						<h4>Personal Information</h4>
+						<ul class="list-group">
+							<li class="list-group-item"><strong>Height:</strong> @character.Height cm</li>
+							<li class="list-group-item"><strong>Mass:</strong> @character.Mass kg</li>
+							<li class="list-group-item"><strong>Hair Color:</strong> @character.HairColor</li>
+							<li class="list-group-item"><strong>Skin Color:</strong> @character.SkinColor</li>
+							<li class="list-group-item"><strong>Eye Color:</strong> @character.EyeColor</li>
+							<li class="list-group-item"><strong>Birth Year:</strong> @character.BirthYear</li>
+							<li class="list-group-item"><strong>Gender:</strong> @character.Gender</li>
+						</ul>
+					</div>
+					@* <div class="col-md-6">
                         <h4>Connections</h4>
-                        
+
                         @if (character.Films?.Count > 0)
                         {
                             <h5>Films</h5>
@@ -64,7 +65,7 @@
                                 }
                             </ul>
                         }
-                        
+
                         @if (character.Starships?.Count > 0)
                         {
                             <h5>Starships</h5>
@@ -76,44 +77,44 @@
                             </ul>
                         }
                     </div> *@
-                </div>
-            </div>
-        </div>
-    }
+				</div>
+			</div>
+		</div>
+	}
 </div>
 
 @code {
-    [Parameter]
-    public string Id { get; set; }
-    
-    private Character character;
-    private bool loading = true;
+	[Parameter]
+	public string Id { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadCharacter();
-    }
+	private Character character;
+	private bool loading = true;
 
-    protected override async Task OnParametersSetAsync()
-    {
-        await LoadCharacter();
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadCharacter();
+	}
 
-    private async Task LoadCharacter()
-    {
-        loading = true;
-        character = await SwapiService.GetCharacterAsync(Id);
-        loading = false;
-    }
+	protected override async Task OnParametersSetAsync()
+	{
+		await LoadCharacter();
+	}
 
-    private string ExtractId(string url)
-    {
-        var segments = url.TrimEnd('/').Split('/');
-        return segments[segments.Length - 1];
-    }
+	private async Task LoadCharacter()
+	{
+		loading = true;
+		character = await SwapiService.GetCharacterAsync(Id);
+		loading = false;
+	}
 
-    private string GetFilmLink(string url)
-    {
-        return $"/films/{ExtractId(url)}";
-    }
+	private string ExtractId(string url)
+	{
+		var segments = url.TrimEnd('/').Split('/');
+		return segments[segments.Length - 1];
+	}
+
+	private string GetFilmLink(string url)
+	{
+		return $"/films/{ExtractId(url)}";
+	}
 }

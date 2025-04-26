@@ -1,0 +1,37 @@
+﻿@using StarWars.Explorer.Models
+
+@inject NavigationManager NavigationManager
+
+<div class="card film-card" @onclick="NavigateToDetail">
+	<div class="card-body">
+		<h5 class="card-title">@Film.Title</h5>
+		<div class="card-text">
+			<p><strong>Episode:</strong> @Film.EpisodeId</p>
+			<p><strong>Director:</strong> @Film.Director</p>
+			<p><strong>Released:</strong> @Film.ReleaseDate</p>
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter]
+	public Film Film { get; set; }
+
+	private void NavigateToDetail()
+	{
+		NavigationManager.NavigateTo($"/films/{Film.Uid}");
+	}
+}
+
+<style>
+	.film-card {
+		cursor: pointer;
+		transition: transform 0.2s, box-shadow 0.2s;
+		margin-bottom: 1rem;
+	}
+
+		.film-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+		}
+</style>

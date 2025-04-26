@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using StarWars.Explorer;
 using StarWars.Explorer.Infrastructure;
 using StarWars.Explorer.Services;
+using StarWars.Explorer.Services.Common;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -30,10 +31,7 @@ builder.Services.AddScoped(sp =>
     return httpClient;
 });
 
-// Register SWAPI service
+builder.Services.AddScoped<SwapiTechServiceHelper>();
 builder.Services.AddScoped<ISwapiService, SwapiService>();
-
-// Add other services here
-// ...
 
 await builder.Build().RunAsync();
