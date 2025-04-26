@@ -1,0 +1,97 @@
+﻿@page "/planets/{Id}"
+
+@using StarWars.Explorer.Components
+@using StarWars.Explorer.Models
+@using StarWars.Explorer.Services
+
+@inject ISwapiService SwapiService
+@inject NavigationManager NavigationManager
+
+<div class="container mt-4">
+	@if (loading)
+	{
+		<LoadingIndicator />
+	}
+	else if (planet == null)
+	{
+		<div class="alert alert-danger">Planet not found.</div>
+	}
+	else
+	{
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="/">Home</a></li>
+						<li class="breadcrumb-item"><a href="/planets">Planets</a></li>
+						<li class="breadcrumb-item active">@planet.Name</li>
+					</ol>
+				</nav>
+			</div>
+		</div>
+
+		<div class="card">
+			<div class="card-header">
+				<h1>@planet.Name</h1>
+			</div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-md-6">
+						<h4>Planet Information</h4>
+						<ul class="list-group">
+							<li class="list-group-item"><strong>Climate:</strong> @planet.Climate</li>
+							<li class="list-group-item"><strong>Terrain:</strong> @planet.Terrain</li>
+							<li class="list-group-item"><strong>Population:</strong> @planet.Population</li>
+							<li class="list-group-item"><strong>Diameter:</strong> @planet.Diameter km</li>
+							<li class="list-group-item"><strong>Rotation Period:</strong> @planet.RotationPeriod hours</li>
+							<li class="list-group-item"><strong>Orbital Period:</strong> @planet.OrbitalPeriod days</li>
+							<li class="list-group-item"><strong>Gravity:</strong> @planet.Gravity</li>
+							<li class="list-group-item"><strong>Surface Water:</strong> @planet.SurfaceWater%</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+</div>
+
+@code {
+	[Parameter]
+	public string Id { get; set; }
+
+	private Planet planet;
+	private bool loading = true;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadPlanet();
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await LoadPlanet();
+	}
+
+	private async Task LoadPlanet()
+	{
+		loading = true;
+		planet = await SwapiService.GetPlanetAsync(Id);
+		loading = false;
+	}
+
+	private string ExtractId(string url)
+	{
+		var segments = url.TrimEnd('/').Split('/');
+		return segments[segments.Length - 1];
+	}
+
+	private string GetCharacterLink(string url)
+	{
+		return $"/characters/{ExtractId(url)}";
+	}
+
+	private string GetFilmLink(string url)
+	{
+		return $"/films/{ExtractId(url)}";
+	}
+}

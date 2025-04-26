@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Json;
-using StarWars.Explorer.Infrastructure;
+﻿using StarWars.Explorer.Infrastructure;
 using StarWars.Explorer.Models;
 using StarWars.Explorer.Services.Common;
 
@@ -28,37 +27,6 @@ namespace StarWars.Explorer.Services
                 endpoint += string.IsNullOrWhiteSpace(searchTerm) ? "?expanded=true" : $"?name={searchTerm}";
                 return await _helper.GetListAsync<Character>(endpoint);
             }, "GetCharactersAsync");
-
-            //return await ExecuteAsync(async () =>
-            //{
-            //    var characters = new List<Character>();
-
-            //    string endpoint = "/people";
-            //    if (!string.IsNullOrWhiteSpace(searchTerm))
-            //    {
-            //        endpoint += $"?name={searchTerm}";
-            //    }
-            //    else
-            //    {
-            //        endpoint += "?expanded=true";
-            //    }
-
-            //    var response = await _httpClient.GetFromJsonAsync<SwapiTechResponse<Character>>(BaseUrl + endpoint);
-
-            //    var results = response?.Results ?? response?.Result;
-
-            //    if (results != null)
-            //    {
-            //        foreach (var result in results)
-            //        {
-            //            var character = result.Properties;
-            //            character.Uid = result.Uid;
-            //            characters.Add(character);
-            //        }
-            //    }
-
-            //    return characters;
-            //}, "GetCharactersAsync");
         }
 
         public async Task<Character?> GetCharacterAsync(string id)
@@ -67,17 +35,6 @@ namespace StarWars.Explorer.Services
             {
                 return await _helper.GetDetailAsync<Character>($"/people/{id}");
             }, $"GetCharacterAsync(id: {id})");
-            //return await ExecuteAsync(async () =>
-            //{
-            //    var response = await _httpClient.GetFromJsonAsync<SwapiTechDetailResponse<Character>>(BaseUrl + $"/people/{id}");
-            //    if (response?.Result?.Properties != null)
-            //    {
-            //        var character = response.Result.Properties;
-            //        character.Uid = id;
-            //        return character;
-            //    }
-            //    return null;
-            //}, $"GetCharacterAsync(id: {id})");
         }
         #endregion "Characters"
 
@@ -101,33 +58,14 @@ namespace StarWars.Explorer.Services
         }
         #endregion "Films"
 
-        public async Task<List<Planet>> GetPlanetsAsync(string searchTerm = null)
+        #region "Planets"
+        public async Task<List<Planet>> GetPlanetsAsync(string? searchTerm = null)
         {
             return await ExecuteAsync(async () =>
             {
-                var planets = new List<Planet>();
-
                 string endpoint = "/planets";
-                if (!string.IsNullOrWhiteSpace(searchTerm))
-                {
-                    endpoint += $"?search={searchTerm}";
-                }
-
-                var response = await _httpClient.GetFromJsonAsync<SwapiTechResponse<Planet>>(endpoint);
-
-                if (response?.Results != null)
-                {
-                    foreach (var result in response.Results)
-                    {
-                        var planet = await GetPlanetAsync(result.Uid);
-                        if (planet != null)
-                        {
-                            planets.Add(planet);
-                        }
-                    }
-                }
-
-                return planets;
+                endpoint += string.IsNullOrWhiteSpace(searchTerm) ? "?expanded=true" : $"?name={searchTerm}";
+                return await _helper.GetListAsync<Planet>(endpoint);
             }, "GetPlanetsAsync");
         }
 
@@ -135,15 +73,9 @@ namespace StarWars.Explorer.Services
         {
             return await ExecuteAsync(async () =>
             {
-                var response = await _httpClient.GetFromJsonAsync<SwapiTechDetailResponse<Planet>>($"/planets/{id}");
-                if (response?.Result?.Properties != null)
-                {
-                    var planet = response.Result.Properties;
-                    planet.Id = id;
-                    return planet;
-                }
-                return null;
+                return await _helper.GetDetailAsync<Planet>($"/planets/{id}");
             }, $"GetPlanetAsync(id: {id})");
         }
+        #endregion "Planets"
     }
 }
