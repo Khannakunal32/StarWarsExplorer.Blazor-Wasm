@@ -1,21 +1,39 @@
-﻿namespace StarWars.Explorer.Models
+﻿using System.Text.Json.Serialization;
+
+namespace StarWars.Explorer.Models
 {
     public class Character
     {
-        public required string Id { get; set; }
-        public required string Name { get; set; }
-        public required string Height { get; set; }
-        public required string Mass { get; set; }
-        public required string HairColor { get; set; }
-        public required string SkinColor { get; set; }
-        public required string EyeColor { get; set; }
-        public required string BirthYear { get; set; }
-        public required string Gender { get; set; }
-        public required string Homeworld { get; set; }
-        public List<string> Films { get; set; } = new();
-        public List<string> Species { get; set; } = new();
-        public List<string> Vehicles { get; set; } = new();
-        public List<string> Starships { get; set; } = new();
-        public required string Url { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("gender")]
+        public string Gender { get; set; }
+
+        [JsonPropertyName("skin_color")]
+        public string SkinColor { get; set; }
+
+        [JsonPropertyName("hair_color")]
+        public string HairColor { get; set; }
+
+        [JsonPropertyName("height")]
+        public string Height { get; set; }
+
+        [JsonPropertyName("eye_color")]
+        public string EyeColor { get; set; }
+
+        [JsonPropertyName("mass")]
+        public string Mass { get; set; }
+
+        [JsonPropertyName("homeworld")]
+        public string Homeworld { get; set; }
+
+        [JsonPropertyName("birth_year")]
+        public string BirthYear { get; set; }
+
+        [JsonPropertyName("url")]
+        public string Url { get; set; }
+
+        public string Uid { get; set; }
     }
 }

@@ -2,34 +2,34 @@
 @inject NavigationManager NavigationManager
 
 <div class="card character-card" @onclick="NavigateToDetail">
-    <div class="card-body">
-        <h5 class="card-title">@Character.Name</h5>
-        <div class="card-text">
-            <p><strong>Gender:</strong> @Character.Gender</p>
-            <p><strong>Birth Year:</strong> @Character.BirthYear</p>
-        </div>
-    </div>
+	<div class="card-body">
+		<h5 class="card-title">@Character.Name</h5>
+		<div class="card-text">
+			<p><strong>Gender:</strong> @Character.Gender</p>
+			<p><strong>Birth Year:</strong> @Character.BirthYear</p>
+		</div>
+	</div>
 </div>
 
 @code {
-    [Parameter]
-    public Character Character { get; set; }
+	[Parameter]
+	public Character Character { get; set; }
 
-    private void NavigateToDetail()
-    {
-        NavigationManager.NavigateTo($"/characters/{Character.Id}");
-    }
+	private void NavigateToDetail()
+	{
+		NavigationManager.NavigateTo($"/characters/{Character.Uid}");
+	}
 }
 
 <style>
-    .character-card {
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-        margin-bottom: 1rem;
-    }
+	.character-card {
+		cursor: pointer;
+		transition: transform 0.2s, box-shadow 0.2s;
+		margin-bottom: 1rem;
+	}
 
-        .character-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
+		.character-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+		}
 </style>

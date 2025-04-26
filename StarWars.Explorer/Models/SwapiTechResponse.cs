@@ -1,17 +1,30 @@
-﻿namespace StarWars.Explorer.Models
+﻿using System.Text.Json.Serialization;
+
+namespace StarWars.Explorer.Models
 {
     public class SwapiTechResponse<T>
     {
         public string Message { get; set; }
-        public T Result { get; set; }
-        public List<SwapiTechResult> Results { get; set; }
+        public int Total_Records { get; set; }
+        public int Total_Pages { get; set; }
+        public string Previous { get; set; }
+        public string Next { get; set; }
+        [JsonPropertyName("result")]
+        public List<SwapiTechResult<T>> Result { get; set; }
+        [JsonPropertyName("results")]
+        public List<SwapiTechResult<T>> Results { get; set; }
     }
 
-    public class SwapiTechResult
+    public class SwapiTechResult<T>
     {
+        [JsonPropertyName("uid")]
         public string Uid { get; set; }
-        public string Name { get; set; }
-        public string Url { get; set; }
+
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        [JsonPropertyName("properties")]
+        public T Properties { get; set; }
     }
 
     public class SwapiTechDetailResponse<T>
