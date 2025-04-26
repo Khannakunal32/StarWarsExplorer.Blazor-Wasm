@@ -1,0 +1,51 @@
+﻿@inherits ErrorBoundary
+
+<CascadingValue Value="this">
+    @if (CurrentException is null)
+    {
+        @ChildContent
+    }
+    else
+    {
+        <div class="global-error">
+            <h2>Something went wrong</h2>
+            <p>@ErrorMessage</p>
+            <button @onclick="Recover" class="btn btn-primary">Try again</button>
+
+            @if (ShowDetails)
+            {
+                <div class="error-details">
+                    <h3>Error Details</h3>
+                    <pre>@CurrentException.ToString()</pre>
+                </div>
+            }
+        </div>
+    }
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public bool ShowDetails { get; set; } = true;
+
+    public string ErrorMessage { get; private set; }
+
+    protected override Task OnErrorAsync(Exception exception)
+    {
+        ErrorMessage = GetFriendlyErrorMessage(exception);
+        Console.Error.WriteLine($"Global Error: {exception}");
+        return base.OnErrorAsync(exception);
+    }
+
+    private string GetFriendlyErrorMessage(Exception ex)
+    {
+        return ex switch
+        {
+            HttpRequestException httpEx => "Failed to connect to the server. Please check your internet connection.",
+            JsonException jsonEx => "Failed to process server response.",
+            _ => "An unexpected error occurred. Please try again later."
+        };
+    }
+}

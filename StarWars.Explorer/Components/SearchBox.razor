@@ -1,0 +1,61 @@
+﻿@using System.Timers
+
+<div class="search-box">
+    <input type="text" placeholder="Search..." @bind-value="SearchText" @bind-value:event="oninput" @onkeyup="HandleKeyUp" />
+    <button @onclick="OnSearch"><i class="oi oi-magnifying-glass"></i></button>
+</div>
+
+@code {
+    private string _searchText;
+    private Timer _debounceTimer;
+
+    [Parameter]
+    public string SearchText
+    {
+        get => _searchText;
+        set
+        {
+            if (_searchText == value) return;
+            _searchText = value;
+
+            if (_debounceTimer == null)
+            {
+                _debounceTimer = new Timer(400);
+                _debounceTimer.Elapsed += OnDebounceTimerElapsed;
+                _debounceTimer.AutoReset = false;
+            }
+
+            _debounceTimer.Stop();
+            _debounceTimer.Start();
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> OnSearchChanged { get; set; }
+
+    private void OnDebounceTimerElapsed(object sender, ElapsedEventArgs e)
+    {
+        _ = InvokeAsync(async () =>
+        {
+            await OnSearchChanged.InvokeAsync(SearchText);
+        });
+    }
+
+    private void HandleKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            OnSearch();
+        }
+    }
+
+    private async Task OnSearch()
+    {
+        await OnSearchChanged.InvokeAsync(SearchText);
+    }
+
+    public void Dispose()
+    {
+        _debounceTimer?.Dispose();
+    }
+}

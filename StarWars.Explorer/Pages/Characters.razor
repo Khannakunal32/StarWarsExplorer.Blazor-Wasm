@@ -1,0 +1,57 @@
+﻿@page "/characters"
+
+@using StarWars.Explorer.Models
+@using StarWars.Explorer.Services
+@using StarWars.Explorer.Components
+
+@inject ISwapiService SwapiService
+
+<div class="container mt-4">
+    <h1>Star Wars Characters</h1>
+    
+    <SearchBox SearchText="@searchText" OnSearchChanged="HandleSearch" />
+    
+    @if (loading)
+    {
+        <LoadingIndicator />
+    }
+    else if (characters == null || !characters.Any())
+    {
+        <div class="alert alert-info">No characters found.</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var character in characters)
+            {
+                <div class="col-md-4 mb-4">
+                    <CharacterCard Character="character" />
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<Character> characters;
+    private bool loading = true;
+    private string searchText = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCharacters();
+    }
+
+    private async Task LoadCharacters()
+    {
+        loading = true;
+        characters = await SwapiService.GetCharactersAsync(searchText);
+        loading = false;
+    }
+
+    private async Task HandleSearch(string searchValue)
+    {
+        searchText = searchValue;
+        await LoadCharacters();
+    }
+}
