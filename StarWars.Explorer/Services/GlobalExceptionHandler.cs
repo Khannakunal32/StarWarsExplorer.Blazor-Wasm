@@ -1,10 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace StarWars.Explorer.Infrastructure
+﻿namespace StarWars.Explorer.Infrastructure
 {
     public class GlobalExceptionHandler : DelegatingHandler
     {
@@ -19,16 +13,13 @@ namespace StarWars.Explorer.Infrastructure
         {
             try
             {
-                // Forward the request to the inner handler
                 return await base.SendAsync(request, cancellationToken);
             }
             catch (Exception ex)
             {
-                // Log the exception with detailed information
                 _logger.LogError(ex, "HTTP request failed: {Method} {Url}",
                     request.Method, request.RequestUri);
 
-                // For more specific exception types, you could add special handling here
                 if (ex is NotImplementedException)
                 {
                     _logger.LogError("Method not implemented: This is a development error");
@@ -38,7 +29,6 @@ namespace StarWars.Explorer.Infrastructure
                     _logger.LogError("API communication error: Check network or API status");
                 }
 
-                // Rethrow to let Blazor's error boundary handle it
                 throw;
             }
         }

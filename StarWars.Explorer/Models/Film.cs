@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using StarWars.Explorer.Models.Common;
 
 namespace StarWars.Explorer.Models
 {

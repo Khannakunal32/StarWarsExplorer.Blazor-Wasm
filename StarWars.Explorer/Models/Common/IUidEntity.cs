@@ -1,4 +1,4 @@
-﻿namespace StarWars.Explorer.Models
+﻿namespace StarWars.Explorer.Models.Common
 {
     public interface IUidEntity
     {

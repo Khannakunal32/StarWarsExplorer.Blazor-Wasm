@@ -6,15 +6,11 @@ namespace StarWars.Explorer.Services
 {
     public class SwapiService : BaseService, ISwapiService
     {
-        private readonly HttpClient _httpClient;
         private readonly SwapiTechServiceHelper _helper;
-        private const string BaseUrl = "https://www.swapi.tech/api";
 
-        public SwapiService(HttpClient httpClient, IExceptionInterceptor exceptionInterceptor, SwapiTechServiceHelper helper)
+        public SwapiService(IExceptionInterceptor exceptionInterceptor, SwapiTechServiceHelper helper)
             : base(exceptionInterceptor)
         {
-            _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(BaseUrl);
             _helper = helper;
         }
 
@@ -62,7 +58,7 @@ namespace StarWars.Explorer.Services
 
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
-                    endpoint += $"&name={searchTerm}";
+                    endpoint += $"&title={searchTerm}";
                 }
 
                 return await _helper.GetPagedListAsync<Film>(endpoint);

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace StarWars.Explorer.Models
+﻿namespace StarWars.Explorer.Models
 {
     public class ApiResponse<T>
     {

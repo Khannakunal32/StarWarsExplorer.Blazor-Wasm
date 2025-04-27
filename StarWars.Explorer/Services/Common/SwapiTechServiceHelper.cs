@@ -1,5 +1,8 @@
 ﻿using System.Net.Http.Json;
+
 using StarWars.Explorer.Models;
+using StarWars.Explorer.Models.Common;
+using StarWars.Explorer.Models.Configuration;
 
 namespace StarWars.Explorer.Services.Common
 {
