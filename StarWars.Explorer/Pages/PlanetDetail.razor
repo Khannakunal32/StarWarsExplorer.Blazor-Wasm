@@ -57,11 +57,6 @@
 	private Planet? planet;
 	private bool loading = true;
 
-	protected override async Task OnInitializedAsync()
-	{
-		await LoadPlanet();
-	}
-
 	protected override async Task OnParametersSetAsync()
 	{
 		await LoadPlanet();

@@ -56,11 +56,6 @@
 	private Character? character;
 	private bool loading = true;
 
-	protected override async Task OnInitializedAsync()
-	{
-		await LoadCharacter();
-	}
-
 	protected override async Task OnParametersSetAsync()
 	{
 		await LoadCharacter();

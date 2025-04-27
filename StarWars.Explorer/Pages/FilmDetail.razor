@@ -121,11 +121,6 @@
 	private bool showCharacterNames = false;
 	private Dictionary<string, string> characterNames = new();
 
-	protected override async Task OnInitializedAsync()
-	{
-		await LoadFilm();
-	}
-
 	protected override async Task OnParametersSetAsync()
 	{
 		await LoadFilm();
