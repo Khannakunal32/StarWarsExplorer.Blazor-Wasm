@@ -1,62 +1,4 @@
-﻿@* @page "/planets"
-
-@using StarWars.Explorer.Components
-@using StarWars.Explorer.Models
-@using StarWars.Explorer.Services
-
-@inject ISwapiService SwapiService
-
-<div class="container mt-4">
-	<h1>Star Wars Planets</h1>
-
-	<SearchBox SearchText="@searchText" OnSearchChanged="HandleSearch" />
-
-	@if (loading)
-	{
-		<LoadingIndicator />
-	}
-	else if (planets == null || !planets.Any())
-	{
-		<div class="alert alert-info">No planets found.</div>
-	}
-	else
-	{
-		<div class="row">
-			@foreach (var planet in planets)
-			{
-				<div class="col-md-4 mb-4">
-					<PlanetCard Planet="planet" />
-				</div>
-			}
-		</div>
-	}
-</div>
-
-@code {
-	private List<Planet> planets;
-	private bool loading = true;
-	private string searchText = "";
-
-	protected override async Task OnInitializedAsync()
-	{
-		await LoadPlanets();
-	}
-
-	private async Task LoadPlanets()
-	{
-		loading = true;
-		planets = await SwapiService.GetPlanetsAsync(searchText);
-		loading = false;
-	}
-
-	private async Task HandleSearch(string searchValue)
-	{
-		searchText = searchValue;
-		await LoadPlanets();
-	}
-} *@
-
-				@page "/planets"
+﻿@page "/planets"
 
 @using StarWars.Explorer.Components
 @using StarWars.Explorer.Models
@@ -88,11 +30,7 @@
 			}
 		</div>
 
-		<!-- Pagination Controls -->
-		<div class="d-flex justify-content-center mt-4">
-			<button class="btn btn-secondary me-2" @onclick="PreviousPage" disabled="@(!CanGoPrevious)">Previous</button>
-			<button class="btn btn-secondary" @onclick="NextPage" disabled="@(!CanGoNext)">Next</button>
-		</div>
+		<PaginationControl Currentpage="@currentPage" Totalpages="@totalPages" OnPageChanged="HandlePageChange" />
 	}
 </div>
 
@@ -124,24 +62,9 @@
 		await LoadPlanets();
 	}
 
-	private async Task NextPage()
+	private async Task HandlePageChange(int newPage)
 	{
-		if (currentPage < totalPages)
-		{
-			currentPage++;
-			await LoadPlanets();
-		}
+		currentPage = newPage;
+		await LoadPlanets();
 	}
-
-	private async Task PreviousPage()
-	{
-		if (currentPage > 1)
-		{
-			currentPage--;
-			await LoadPlanets();
-		}
-	}
-
-	private bool CanGoNext => currentPage < totalPages;
-	private bool CanGoPrevious => currentPage > 1;
 }

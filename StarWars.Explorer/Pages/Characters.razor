@@ -29,13 +29,17 @@
                 </div>
             }
         </div>
+
+        <PaginationControl Currentpage="@currentPage" Totalpages="@totalPages" OnPageChanged="HandlePageChange" />
     }
 </div>
 
 @code {
-    private List<Character> characters;
+    private List<Character> characters = new();
     private bool loading = true;
     private string searchText = "";
+    private int currentPage = 1;
+    private int totalPages = 1;
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,13 +49,22 @@
     private async Task LoadCharacters()
     {
         loading = true;
-        characters = await SwapiService.GetCharactersAsync(searchText);
+        var pageResult = await SwapiService.GetCharactersAsync(searchText, currentPage);
+		characters = pageResult.Items;
+		totalPages = pageResult.TotalPages;
         loading = false;
     }
 
     private async Task HandleSearch(string searchValue)
     {
         searchText = searchValue;
+		currentPage = 1;
+        await LoadCharacters();
+    }
+
+    private async Task HandlePageChange(int newPage)
+    {
+        currentPage = newPage;
         await LoadCharacters();
     }
 }

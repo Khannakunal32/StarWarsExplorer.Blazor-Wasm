@@ -29,6 +29,21 @@ namespace StarWars.Explorer.Services
             }, "GetCharactersAsync");
         }
 
+        public async Task<PagedResult<Character>> GetCharactersAsync(string? searchTerm = null, int page = 1)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                string endpoint = $"/people?page={page}&limit=9&expanded=true";
+
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    endpoint += $"&name={searchTerm}";
+                }
+
+                return await _helper.GetPagedListAsync<Character>(endpoint);
+            }, "GetCharactersAsync");
+        }
+
         public async Task<Character?> GetCharacterAsync(string id)
         {
             return await ExecuteAsync(async () =>
@@ -46,6 +61,21 @@ namespace StarWars.Explorer.Services
                 string endpoint = "/films";
                 endpoint += string.IsNullOrWhiteSpace(searchTerm) ? "?expanded=true" : $"?title={searchTerm}";
                 return await _helper.GetListAsync<Film>(endpoint);
+            }, "GetFilmsAsync");
+        }
+
+        public async Task<PagedResult<Film>> GetFilmsAsync(string? searchTerm = null, int page = 1)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                string endpoint = $"/films?page={page}&limit=9&expanded=true";
+
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    endpoint += $"&name={searchTerm}";
+                }
+
+                return await _helper.GetPagedListAsync<Film>(endpoint);
             }, "GetFilmsAsync");
         }
 
@@ -69,14 +99,6 @@ namespace StarWars.Explorer.Services
             }, "GetPlanetsAsync");
         }
 
-        public async Task<Planet?> GetPlanetAsync(string id)
-        {
-            return await ExecuteAsync(async () =>
-            {
-                return await _helper.GetDetailAsync<Planet>($"/planets/{id}");
-            }, $"GetPlanetAsync(id: {id})");
-        }
-
         public async Task<PagedResult<Planet>> GetPlanetsAsync(string? searchTerm = null, int page = 1)
         {
             return await ExecuteAsync(async () =>
@@ -90,6 +112,14 @@ namespace StarWars.Explorer.Services
 
                 return await _helper.GetPagedListAsync<Planet>(endpoint);
             }, "GetPlanetsAsync");
+        }
+
+        public async Task<Planet?> GetPlanetAsync(string id)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                return await _helper.GetDetailAsync<Planet>($"/planets/{id}");
+            }, $"GetPlanetAsync(id: {id})");
         }
         #endregion "Planets"
     }

@@ -29,13 +29,17 @@
 				</div>
 			}
 		</div>
+
+		<PaginationControl Currentpage="@currentPage" Totalpages="@totalPages" OnPageChanged="HandlePageChange" />
 	}
 </div>
 
 @code {
-	private List<Film> films;
+	private List<Film> films = new();
 	private bool loading = true;
 	private string searchText = "";
+	private int currentPage = 1;
+	private int totalPages = 1;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -45,13 +49,22 @@
 	private async Task LoadFilms()
 	{
 		loading = true;
-		films = await SwapiService.GetFilmsAsync(searchText);
+		var pagedResult = await SwapiService.GetFilmsAsync(searchText, currentPage);
+		films = pagedResult.Items;
+		totalPages = pagedResult.TotalPages;
 		loading = false;
 	}
 
 	private async Task HandleSearch(string searchValue)
 	{
 		searchText = searchValue;
+		currentPage = 1;
+		await LoadFilms();
+	}
+
+	private async Task HandlePageChange(int newPage)
+	{
+		currentPage = newPage;
 		await LoadFilms();
 	}
 }
