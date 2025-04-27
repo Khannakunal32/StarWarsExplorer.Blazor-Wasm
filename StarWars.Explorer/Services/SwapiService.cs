@@ -1,5 +1,7 @@
-﻿using StarWars.Explorer.Infrastructure;
+﻿using System.Runtime;
+using StarWars.Explorer.Infrastructure;
 using StarWars.Explorer.Models;
+using StarWars.Explorer.Models.Configuration;
 using StarWars.Explorer.Services.Common;
 
 namespace StarWars.Explorer.Services
@@ -7,11 +9,13 @@ namespace StarWars.Explorer.Services
     public class SwapiService : BaseService, ISwapiService
     {
         private readonly SwapiTechServiceHelper _helper;
+        private readonly SwapiConfig _config;
 
-        public SwapiService(IExceptionInterceptor exceptionInterceptor, SwapiTechServiceHelper helper)
+        public SwapiService(IExceptionInterceptor exceptionInterceptor, SwapiTechServiceHelper helper, SwapiConfig config)
             : base(exceptionInterceptor)
         {
             _helper = helper;
+            _config = config;
         }
 
         #region "Characters"
@@ -19,7 +23,7 @@ namespace StarWars.Explorer.Services
         {
             return await ExecuteAsync(async () =>
             {
-                string endpoint = $"/people?page={page}&limit=9&expanded=true";
+                string endpoint = $"{_config.PeopleEndpoint}?page={page}&limit=9&expanded=true";
 
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
@@ -34,7 +38,7 @@ namespace StarWars.Explorer.Services
         {
             return await ExecuteAsync(async () =>
             {
-                return await _helper.GetDetailAsync<Character>($"/people/{id}");
+                return await _helper.GetDetailAsync<Character>($"{_config.PeopleEndpoint}/{id}");
             }, $"GetCharacterAsync(id: {id})");
         }
         #endregion "Characters"
@@ -44,7 +48,7 @@ namespace StarWars.Explorer.Services
         {
             return await ExecuteAsync(async () =>
             {
-                string endpoint = "/films";
+                string endpoint = _config.FilmsEndpoint;
                 endpoint += string.IsNullOrWhiteSpace(searchTerm) ? "?expanded=true" : $"?title={searchTerm}";
                 return await _helper.GetListAsync<Film>(endpoint);
             }, "GetFilmsAsync");
@@ -54,7 +58,7 @@ namespace StarWars.Explorer.Services
         {
             return await ExecuteAsync(async () =>
             {
-                string endpoint = $"/films?page={page}&limit=9&expanded=true";
+                string endpoint = $"{_config.FilmsEndpoint}?page={page}&limit=9&expanded=true";
 
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
@@ -69,7 +73,7 @@ namespace StarWars.Explorer.Services
         {
             return await ExecuteAsync(async () =>
             {
-                return await _helper.GetDetailAsync<Film>($"/films/{id}");
+                return await _helper.GetDetailAsync<Film>($"{_config.FilmsEndpoint}/{id}");
             }, $"GetFilmAsync(id: {id})");
         }
         #endregion "Films"
@@ -79,7 +83,7 @@ namespace StarWars.Explorer.Services
         {
             return await ExecuteAsync(async () =>
             {
-                string endpoint = $"/planets?page={page}&limit=9&expanded=true";
+                string endpoint = $"{_config.PlanetsEndpoint}?page={page}&limit=9&expanded=true";
 
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
@@ -94,7 +98,7 @@ namespace StarWars.Explorer.Services
         {
             return await ExecuteAsync(async () =>
             {
-                return await _helper.GetDetailAsync<Planet>($"/planets/{id}");
+                return await _helper.GetDetailAsync<Planet>($"{_config.PlanetsEndpoint}/{id}");
             }, $"GetPlanetAsync(id: {id})");
         }
         #endregion "Planets"

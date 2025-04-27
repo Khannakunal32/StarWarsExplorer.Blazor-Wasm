@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+
 using StarWars.Explorer;
 using StarWars.Explorer.Infrastructure;
+using StarWars.Explorer.Models.Configuration;
 using StarWars.Explorer.Services;
 using StarWars.Explorer.Services.Common;
 
@@ -25,6 +27,11 @@ builder.Services.AddScoped(sp =>
 
     return httpClient;
 });
+
+var swapiConfigs = new SwapiConfig();
+builder.Configuration.GetSection("SwapiConfig").Bind(swapiConfigs);
+
+builder.Services.AddSingleton(swapiConfigs);
 
 builder.Services.AddScoped<SwapiTechServiceHelper>();
 builder.Services.AddScoped<ISwapiService, SwapiService>();

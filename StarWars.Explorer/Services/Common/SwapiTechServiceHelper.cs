@@ -9,12 +9,15 @@ namespace StarWars.Explorer.Services.Common
     public class SwapiTechServiceHelper
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "https://www.swapi.tech/api";
+        private readonly SwapiConfig _config;
 
-        public SwapiTechServiceHelper(HttpClient httpClient)
+        public SwapiTechServiceHelper(HttpClient httpClient, SwapiConfig config)
         {
             _httpClient = httpClient;
+            _config = config;
         }
+
+        private string GetFullUrl(string endpoint) => _config.BaseUrl + endpoint;
 
         private List<SwapiTechResult<T>> GetResults<T>(SwapiTechResponse<T>? response)
         {
@@ -23,7 +26,7 @@ namespace StarWars.Explorer.Services.Common
 
         public async Task<List<T>> GetListAsync<T>(string endpoint) where T : IUidEntity, new()
         {
-            var response = await _httpClient.GetFromJsonAsync<SwapiTechResponse<T>>(BaseUrl + endpoint);
+            var response = await _httpClient.GetFromJsonAsync<SwapiTechResponse<T>>(GetFullUrl(endpoint));
             var list = new List<T>();
 
             foreach (var result in GetResults(response))
@@ -37,7 +40,7 @@ namespace StarWars.Explorer.Services.Common
 
         public async Task<T?> GetDetailAsync<T>(string endpoint) where T : class, IUidEntity, new()
         {
-            var response = await _httpClient.GetFromJsonAsync<SwapiTechDetailResponse<T>>(BaseUrl + endpoint);
+            var response = await _httpClient.GetFromJsonAsync<SwapiTechDetailResponse<T>>(GetFullUrl(endpoint));
             var item = response?.Result?.Properties;
             if (item != null)
             {
@@ -48,7 +51,7 @@ namespace StarWars.Explorer.Services.Common
 
         public async Task<PagedResult<T>> GetPagedListAsync<T>(string endpoint) where T : IUidEntity, new()
         {
-            var response = await _httpClient.GetFromJsonAsync<SwapiTechResponse<T>>(BaseUrl + endpoint);
+            var response = await _httpClient.GetFromJsonAsync<SwapiTechResponse<T>>(GetFullUrl(endpoint));
             var pagedResult = new PagedResult<T>();
 
             if (response != null)
