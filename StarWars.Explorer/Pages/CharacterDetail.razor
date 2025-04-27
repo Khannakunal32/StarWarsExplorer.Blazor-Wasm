@@ -1,10 +1,5 @@
 ﻿@page "/characters/{Id}"
 
-@using StarWars.Explorer.Components
-@using StarWars.Explorer.Models
-@using StarWars.Explorer.Services
-
-@inject ISwapiService SwapiService
 @inject NavigationManager NavigationManager
 
 <div class="container mt-4">
@@ -48,35 +43,6 @@
 							<li class="list-group-item"><strong>Gender:</strong> @character.Gender</li>
 						</ul>
 					</div>
-					@* <div class="col-md-6">
-                        <h4>Connections</h4>
-
-                        @if (character.Films?.Count > 0)
-                        {
-                            <h5>Films</h5>
-                            <ul class="list-group mb-3">
-                                @foreach (var filmUrl in character.Films)
-                                {
-                                    <li class="list-group-item">
-                                        <a href="@GetFilmLink(filmUrl)">
-                                            Film @ExtractId(filmUrl)
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        }
-
-                        @if (character.Starships?.Count > 0)
-                        {
-                            <h5>Starships</h5>
-                            <ul class="list-group">
-                                @foreach (var starshipUrl in character.Starships)
-                                {
-                                    <li class="list-group-item">Starship @ExtractId(starshipUrl)</li>
-                                }
-                            </ul>
-                        }
-                    </div> *@
 				</div>
 			</div>
 		</div>
@@ -85,9 +51,9 @@
 
 @code {
 	[Parameter]
-	public string Id { get; set; }
+	public string Id { get; set; } = string.Empty;
 
-	private Character character;
+	private Character? character;
 	private bool loading = true;
 
 	protected override async Task OnInitializedAsync()

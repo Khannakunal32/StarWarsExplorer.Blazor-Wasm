@@ -19,16 +19,6 @@ namespace StarWars.Explorer.Services
         }
 
         #region "Characters"
-        public async Task<List<Character>> GetCharactersAsync(string? searchTerm)
-        {
-            return await ExecuteAsync(async () =>
-            {
-                string endpoint = "/people";
-                endpoint += string.IsNullOrWhiteSpace(searchTerm) ? "?expanded=true" : $"?name={searchTerm}";
-                return await _helper.GetListAsync<Character>(endpoint);
-            }, "GetCharactersAsync");
-        }
-
         public async Task<PagedResult<Character>> GetCharactersAsync(string? searchTerm = null, int page = 1)
         {
             return await ExecuteAsync(async () =>
@@ -89,16 +79,6 @@ namespace StarWars.Explorer.Services
         #endregion "Films"
 
         #region "Planets"
-        public async Task<List<Planet>> GetPlanetsAsync(string? searchTerm = null)
-        {
-            return await ExecuteAsync(async () =>
-            {
-                string endpoint = "/planets";
-                endpoint += string.IsNullOrWhiteSpace(searchTerm) ? "?expanded=true" : $"?name={searchTerm}";
-                return await _helper.GetListAsync<Planet>(endpoint);
-            }, "GetPlanetsAsync");
-        }
-
         public async Task<PagedResult<Planet>> GetPlanetsAsync(string? searchTerm = null, int page = 1)
         {
             return await ExecuteAsync(async () =>

@@ -1,5 +1,4 @@
-﻿@using StarWars.Explorer.Models
-@inject NavigationManager NavigationManager
+﻿@inject NavigationManager NavigationManager
 
 <div class="card character-card" @onclick="NavigateToDetail">
 	<div class="card-body">
@@ -13,7 +12,7 @@
 
 @code {
 	[Parameter]
-	public Character Character { get; set; }
+	public Character Character { get; set; } = new Character();
 
 	private void NavigateToDetail()
 	{

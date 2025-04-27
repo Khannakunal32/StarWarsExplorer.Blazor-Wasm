@@ -1,11 +1,5 @@
 ﻿@page "/"
-@* 
-<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
- *@
 <div class="container mt-4">
     <div class="jumbotron text-center">
         <h1>Star Wars Explorer</h1>
@@ -42,21 +36,21 @@ Welcome to your new app.
 
 @code {
     [Inject]
-    private NavigationManager NavigationManager { get; set; }
+    private NavigationManager? NavigationManager { get; set; }
 
     private void NavigateToCharacters()
     {
-        NavigationManager.NavigateTo("/characters");
+        NavigationManager?.NavigateTo("/characters");
     }
 
     private void NavigateToFilms()
     {
-        NavigationManager.NavigateTo("/films");
+        NavigationManager?.NavigateTo("/films");
     }
 
     private void NavigateToPlanets()
     {
-        NavigationManager.NavigateTo("/planets");
+        NavigationManager?.NavigateTo("/planets");
     }
 }
 

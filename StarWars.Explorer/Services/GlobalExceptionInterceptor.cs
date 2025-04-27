@@ -2,10 +2,10 @@
 {
     public interface IExceptionInterceptor
     {
-        T Execute<T>(Func<T> action, string context = null);
-        void Execute(Action action, string context = null);
-        Task<T> ExecuteAsync<T>(Func<Task<T>> action, string context = null);
-        Task ExecuteAsync(Func<Task> action, string context = null);
+        T Execute<T>(Func<T> action, string? context);
+        void Execute(Action action, string? context = null);
+        Task<T> ExecuteAsync<T>(Func<Task<T>> action, string? context);
+        Task ExecuteAsync(Func<Task> action, string? context);
     }
 
     public class GlobalExceptionInterceptor : IExceptionInterceptor
@@ -17,7 +17,7 @@
             _logger = logger;
         }
 
-        public T Execute<T>(Func<T> action, string context = null)
+        public T Execute<T>(Func<T> action, string? context)
         {
             try
             {
@@ -30,7 +30,7 @@
             }
         }
 
-        public void Execute(Action action, string context = null)
+        public void Execute(Action action, string? context)
         {
             try
             {
@@ -43,7 +43,7 @@
             }
         }
 
-        public async Task<T> ExecuteAsync<T>(Func<Task<T>> action, string context = null)
+        public async Task<T> ExecuteAsync<T>(Func<Task<T>> action, string? context)
         {
             try
             {
@@ -56,7 +56,7 @@
             }
         }
 
-        public async Task ExecuteAsync(Func<Task> action, string context = null)
+        public async Task ExecuteAsync(Func<Task> action, string? context)
         {
             try
             {
@@ -69,7 +69,7 @@
             }
         }
 
-        private void LogException(Exception ex, string context)
+        private void LogException(Exception ex, string? context)
         {
             if (string.IsNullOrEmpty(context))
             {

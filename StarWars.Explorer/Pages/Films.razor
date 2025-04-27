@@ -1,70 +1,16 @@
 ﻿@page "/films"
 
-@using StarWars.Explorer.Components
-@using StarWars.Explorer.Models
-@using StarWars.Explorer.Services
-
-@inject ISwapiService SwapiService
-
-<div class="container mt-4">
-	<h1>Star Wars Films</h1>
-
-	<SearchBox SearchText="@searchText" OnSearchChanged="HandleSearch" />
-
-	@if (loading)
-	{
-		<LoadingIndicator />
-	}
-	else if (films == null || !films.Any())
-	{
-		<div class="alert alert-info">No films found.</div>
-	}
-	else
-	{
-		<div class="row">
-			@foreach (var film in films)
-			{
-				<div class="col-md-4 mb-4">
-					<FilmCard Film="film" />
-				</div>
-			}
-		</div>
-
-		<PaginationControl Currentpage="@currentPage" Totalpages="@totalPages" OnPageChanged="HandlePageChange" />
-	}
-</div>
+<PaginatedListPage TItem="Film"
+				   Title="Star Wars Films"
+				   LoadData="LoadFilms"
+				   ItemTemplate="FilmTemplate">
+</PaginatedListPage>
 
 @code {
-	private List<Film> films = new();
-	private bool loading = true;
-	private string searchText = "";
-	private int currentPage = 1;
-	private int totalPages = 1;
-
-	protected override async Task OnInitializedAsync()
+	private async Task<PagedResult<Film>> LoadFilms(string search, int page)
 	{
-		await LoadFilms();
+		return await SwapiService.GetFilmsAsync(search, page);
 	}
 
-	private async Task LoadFilms()
-	{
-		loading = true;
-		var pagedResult = await SwapiService.GetFilmsAsync(searchText, currentPage);
-		films = pagedResult.Items;
-		totalPages = pagedResult.TotalPages;
-		loading = false;
-	}
-
-	private async Task HandleSearch(string searchValue)
-	{
-		searchText = searchValue;
-		currentPage = 1;
-		await LoadFilms();
-	}
-
-	private async Task HandlePageChange(int newPage)
-	{
-		currentPage = newPage;
-		await LoadFilms();
-	}
+	private RenderFragment<Film> FilmTemplate => film => @<FilmCard Film="film" />;
 }

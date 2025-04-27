@@ -1,70 +1,16 @@
 ﻿@page "/characters"
 
-@using StarWars.Explorer.Models
-@using StarWars.Explorer.Services
-@using StarWars.Explorer.Components
-
-@inject ISwapiService SwapiService
-
-<div class="container mt-4">
-    <h1>Star Wars Characters</h1>
-    
-    <SearchBox SearchText="@searchText" OnSearchChanged="HandleSearch" />
-    
-    @if (loading)
-    {
-        <LoadingIndicator />
-    }
-    else if (characters == null || !characters.Any())
-    {
-        <div class="alert alert-info">No characters found.</div>
-    }
-    else
-    {
-        <div class="row">
-            @foreach (var character in characters)
-            {
-                <div class="col-md-4 mb-4">
-                    <CharacterCard Character="character" />
-                </div>
-            }
-        </div>
-
-        <PaginationControl Currentpage="@currentPage" Totalpages="@totalPages" OnPageChanged="HandlePageChange" />
-    }
-</div>
+<PaginatedListPage TItem="Character"
+				   Title="Star Wars Characters"
+				   LoadData="LoadCharacters"
+				   ItemTemplate="CharacterTemplate">
+</PaginatedListPage>
 
 @code {
-    private List<Character> characters = new();
-    private bool loading = true;
-    private string searchText = "";
-    private int currentPage = 1;
-    private int totalPages = 1;
+	private async Task<PagedResult<Character>> LoadCharacters(string search, int page)
+	{
+		return await SwapiService.GetCharactersAsync(search, page);
+	}
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadCharacters();
-    }
-
-    private async Task LoadCharacters()
-    {
-        loading = true;
-        var pageResult = await SwapiService.GetCharactersAsync(searchText, currentPage);
-		characters = pageResult.Items;
-		totalPages = pageResult.TotalPages;
-        loading = false;
-    }
-
-    private async Task HandleSearch(string searchValue)
-    {
-        searchText = searchValue;
-		currentPage = 1;
-        await LoadCharacters();
-    }
-
-    private async Task HandlePageChange(int newPage)
-    {
-        currentPage = newPage;
-        await LoadCharacters();
-    }
+	private RenderFragment<Character> CharacterTemplate => character => @<CharacterCard Character="character" />;
 }

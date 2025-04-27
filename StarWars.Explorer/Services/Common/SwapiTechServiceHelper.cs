@@ -13,9 +13,9 @@ namespace StarWars.Explorer.Services.Common
             _httpClient = httpClient;
         }
 
-        private List<SwapiTechResult<T>> GetResults<T>(SwapiTechResponse<T> response)
+        private List<SwapiTechResult<T>> GetResults<T>(SwapiTechResponse<T>? response)
         {
-            return response.Results ?? response.Result ?? new List<SwapiTechResult<T>>();
+            return response?.Results ?? response?.Result ?? new List<SwapiTechResult<T>>();
         }
 
         public async Task<List<T>> GetListAsync<T>(string endpoint) where T : IUidEntity, new()

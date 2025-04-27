@@ -1,10 +1,5 @@
 ﻿@page "/planets/{Id}"
 
-@using StarWars.Explorer.Components
-@using StarWars.Explorer.Models
-@using StarWars.Explorer.Services
-
-@inject ISwapiService SwapiService
 @inject NavigationManager NavigationManager
 
 <div class="container mt-4">
@@ -57,9 +52,9 @@
 
 @code {
 	[Parameter]
-	public string Id { get; set; }
+	public string Id { get; set; } = string.Empty;
 
-	private Planet planet;
+	private Planet? planet;
 	private bool loading = true;
 
 	protected override async Task OnInitializedAsync()

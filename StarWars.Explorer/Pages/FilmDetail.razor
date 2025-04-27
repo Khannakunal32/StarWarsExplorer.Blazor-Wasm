@@ -1,10 +1,5 @@
 ﻿@page "/films/{Id}"
 
-@using StarWars.Explorer.Components
-@using StarWars.Explorer.Models
-@using StarWars.Explorer.Services
-
-@inject ISwapiService SwapiService
 @inject NavigationManager NavigationManager
 
 <div class="container mt-4">
@@ -118,9 +113,9 @@
 
 @code {
 	[Parameter]
-	public string Id { get; set; }
+	public string Id { get; set; } = string.Empty;
 
-	private Film film;
+	private Film? film;
 	private bool loading = true;
 	private bool loadingCharacter = false;
 	private bool showCharacterNames = false;
