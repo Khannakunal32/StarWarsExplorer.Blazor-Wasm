@@ -2,6 +2,10 @@
 
 A modern single-page web application (SPA) built with **Blazor WebAssembly** and **.NET 8**, showcasing information from the Star Wars universe using the [SWAPI.tech](https://www.swapi.tech/) API.
 
+> 🛠️ **Developed in under 5 hours** as a technical demonstration of Blazor WASM and .NET 8.
+
+🔗 **Live Demo**: [https://kk-starwarsexplorer.netlify.app/](https://kk-starwarsexplorer.netlify.app/)
+
 ## 🚀 Features
 
 - 🔎 **Search** for Characters, Planets, and Films
